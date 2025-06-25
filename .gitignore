@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.ipynb_checkpoints/
+.DS_Store
+
+# Virtual Environment
+venv/
+.venv/
+# Adjust this path if your virtual env is directly inside the project root, like:
+# storefront-AjrtrSQw/
+
+# Keras / TensorFlow Models
+models/fold_*/    # Exclude individual fold models as they can be large.
+*.keras
+*.h5
+
+# Data (Crucial: Exclude raw data due to size)
+data/isic_2016/images/
+data/isic_2016/masks/
+
+# Logs and other temporary files
+*.log
+*.sqlite3
