@@ -118,7 +118,7 @@ The model produces highly accurate and smooth segmentation masks, closely matchi
 ## **6\. How to Run**
 
 1. **Clone the repository:**  
-   git clone https://github.com/your-username/MedicalSegmentation.git  
+   git clone https://github.com/joffinkoshy/U-Net-Lesion-Segmentation.git  
    cd MedicalSegmentation
 
 2. Set up the environment:  
