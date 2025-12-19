@@ -1,140 +1,225 @@
 # **U-Net for Skin Lesion Segmentation (ISIC 2016 Dataset)**
 
-## **1\. Project Overview**
+## **🚀 Project Overview**
 
-This project implements a U-Net convolutional neural network for the automated segmentation of skin lesions from dermoscopic images. Accurate segmentation of moles and other skin lesions is a crucial step in dermatological image analysis, assisting clinicians in the early diagnosis and monitoring of conditions like melanoma. The model is trained and rigorously evaluated on the ISIC 2016 dataset \[cite: train.py, dataloader.py\], demonstrating robust performance through advanced techniques like data augmentation and K-Fold Cross-Validation.
+This project implements a **U-Net convolutional neural network** for automated segmentation of skin lesions from dermoscopic images. The model is trained and evaluated on the **ISIC 2016 dataset**, demonstrating robust performance through advanced techniques like **data augmentation** and **K-Fold Cross-Validation**.
 
-## **2\. Dataset**
+### **🔬 Key Features**
 
-The model is trained and evaluated using the **ISIC 2016: Skin Lesion Analysis Toward Melanoma Detection** dataset \[cite: train.py, dataloader.py\].
+- **Standard U-Net Architecture** with encoder-decoder structure and skip connections
+- **Advanced Data Augmentation** including flips, brightness/contrast adjustments
+- **Combined Loss Function** (BCE + Dice Loss) for optimal segmentation
+- **K-Fold Cross-Validation** (5 folds) for robust evaluation
+- **Comprehensive Metrics** including Mean IoU, Dice Coefficient, Recall, and Precision
 
-* It consists of dermoscopic images of skin lesions along with corresponding expert-annotated segmentation masks.  
-* The dataset includes 900 image-mask pairs \[cite: train.py\].
-
-**How to obtain the dataset:**
-
-1. Download the ISIC 2016 dataset from the official ISIC Archive:  
-   * **Images**: ISIC-2016\_Training\_Data.zip (contains original lesion images)  
-   * **Ground Truth Masks**: ISIC-2016\_Training\_Part1\_Segmentation\_GroundTruth.zip (contains corresponding binary masks)  
-2. Unzip both archives.  
-3. Create a directory structure: data/isic\_2016/ in the root of your project.  
-4. Place the extracted image files (e.g., ISIC\_0000000.jpg) into data/isic\_2016/images/.  
-5. Place the extracted mask files (e.g., ISIC\_0000000\_segmentation.png) into data/isic\_2016/masks/.
-
-## **3\. Methodology**
-
-### **3.1. U-Net Architecture**
-
-The core of this project is a U-Net, a state-of-the-art convolutional neural network widely recognized for its effectiveness in biomedical image segmentation tasks \[cite: unet\_model.py\].
-
-* **Encoder-Decoder Structure**: The architecture consists of a contracting path (encoder) to capture context and a symmetric expanding path (decoder) to enable precise localization \[cite: unet\_model.py\].  
-* **Skip Connections**: Crucial skip connections between the encoder and decoder paths transfer high-resolution feature maps, helping the decoder to recover fine-grained details lost during downsampling \[cite: unet\_model.py\].  
-* The model takes input images of size 128x128x3 (RGB) and outputs a single-channel segmentation mask (128x128x1) with sigmoid activation for binary classification of each pixel \[cite: unet\_model.py, train.py\].
-
-### **3.2. Data Preprocessing & Augmentation**
-
-Data loading and preprocessing are handled by dataloader.py \[cite: dataloader.py\].
-
-* **Resizing & Normalization**: All images and masks are resized to 128x128 pixels. Image pixel values are normalized to the \[0, 1\] range \[cite: dataloader.py\].  
-* **Data Augmentation**: To improve the model's generalization capabilities and combat overfitting (common in limited medical datasets), extensive data augmentation is applied to the training data. This includes:  
-  * Random horizontal and vertical flips \[cite: dataloader.py\].  
-  * Random brightness adjustments \[cite: dataloader.py\].  
-  * Random contrast adjustments \[cite: dataloader.py\].  
-  * Crucially, geometric transformations (flips) are applied identically to both images and their corresponding masks to maintain pixel-wise alignment \[cite: dataloader.py\].
-
-### **3.3. Loss Function & Metrics**
-
-* **Loss Function**: A custom combined loss function, bce\_dice\_loss, is used, which sums the Binary Cross-Entropy (BCE) loss and the Dice Loss \[cite: train.py\]. This combination is highly effective for segmentation tasks, as BCE focuses on pixel-wise accuracy, while Dice Loss emphasizes overlap and is particularly useful for imbalanced classes (small lesions).  
-* **Evaluation Metrics**: The model's performance is monitored using standard segmentation metrics \[cite: train.py\]:  
-  * **Mean IoU (Intersection over Union)**: A common metric for evaluating the overlap between predicted and ground truth masks.  
-  * **Dice Coefficient (F1 Score)**: Another widely used metric, representing the harmonic mean of precision and recall, especially valuable for imbalanced segmentation problems.  
-  * **Recall (Sensitivity)**: Measures the proportion of actual positive pixels that are correctly identified.  
-  * **Precision (Positive Predictive Value)**: Measures the proportion of predicted positive pixels that are actually correct.
-
-### **3.4. Training Strategy**
-
-The model is trained using the Adam optimizer with a learning rate of 1×10−4 and a batch size of 16 \[cite: train.py\]. Several callbacks are employed to optimize and stabilize the training process \[cite: train.py\]:
-
-* **Early Stopping**: Stops training if the validation loss does not improve for 10 consecutive epochs, preventing overfitting \[cite: train.py\].  
-* **Model Checkpoint**: Saves the model weights whenever the validation loss achieves a new minimum, ensuring that the best-performing model is preserved \[cite: train.py\].  
-* **Reduce Learning Rate on Plateau**: Reduces the learning rate by a factor of 0.5 if the validation loss does not improve for 5 consecutive epochs, helping the model escape local minima \[cite: train.py\].
-
-### **3.5. K-Fold Cross-Validation (Robust Evaluation)**
-
-To provide a more robust and statistically sound evaluation of the model's generalization performance, K-Fold Cross-Validation is implemented with NUM\_FOLDS \= 5 \[cite: train.py\].
-
-* The entire dataset is first split into a **fixed, truly unseen 20% test set** and an 80% training/validation pool \[cite: train.py\].  
-* The 5-Fold Cross-Validation is then performed on this 80% pool. In each fold, the data is divided into training and validation sets \[cite: train.py\].  
-* A fresh U-Net model is trained for each fold, and its best weights (based on its internal validation set) are then evaluated on the **fixed 20% test set** \[cite: train.py\].  
-* The final performance metrics are the average and standard deviation of the test results across all 5 folds. This minimizes bias associated with a single arbitrary data split and provides a more reliable estimate of the model's expected performance on new, unseen data.
-
-## **4\. Results**
-
-The model demonstrates strong performance in segmenting skin lesions, as evidenced by the quantitative metrics and qualitative visualizations.
-
-### **4.1. K-Fold Cross-Validation Results (Average on Test Set, 5 Folds)**
-
-The average test metrics across 5 folds, along with their standard deviations, are:
+### **📊 Performance Metrics (5-Fold Cross-Validation)**
 
 | Metric | Average Value | Standard Deviation |
-| :---- | :---- | :---- |
+|--------|---------------|---------------------|
 | **Test Loss** | 0.3168 | ±0.0134 |
 | **Test Mean IoU** | 0.3861 | ±0.0080 |
 | **Test Dice Coef** | 0.8685 | ±0.0041 |
 | **Test Recall** | 0.8662 | ±0.0047 |
 | **Test Precision** | 0.9034 | ±0.0102 |
 
-*Note: Metrics calculated on a held-out 20% test set, evaluated by the best model from each fold \[cite: train.py\].*
+## **📁 Project Structure**
 
-### **4.2. Training History (Last Fold)**
+```
+U-Net-Skin-Lesion-Segmentation/
+├── main.py                          # Main entry point
+├── README.md                        # Project documentation
+├── requirements.txt                 # Dependencies
+├── .gitignore                       # Git ignore rules
+├── data/                            # Dataset directory
+│   └── isic_2016/                   # ISIC 2016 dataset
+├── Results/                         # Training results
+├── src/
+│   ├── train.py                     # Unified training script (standard + enhanced)
+│   ├── unet_model.py                # Standard U-Net model implementation
+│   ├── dataloader.py                # Data loading and preprocessing
+│   ├── models/                      # Model architectures
+│   │   └── attention_unet.py        # Attention U-Net (enhanced)
+│   ├── data/                        # Data processing
+│   │   └── advanced_augmentation.py # Advanced augmentation
+│   ├── utils/                       # Utility functions
+│   │   ├── training_utils.py        # Training utilities
+│   │   └── post_processing.py       # Post-processing
+│   └── visualization/               # Visualization tools
+│       └── visualization_utils.py   # Visualization utilities
+```
 
-The following plots illustrate the training and validation performance over epochs for the last fold \[cite: KFold.png\]:  
-\[Insert KFold.png here\]
+## **📦 Dataset**
 
-### **4.3. Qualitative Visualizations**
+### **ISIC 2016: Skin Lesion Analysis Toward Melanoma Detection**
 
-The model produces highly accurate and smooth segmentation masks, closely matching the ground truth.
+- **900 image-mask pairs** for training and evaluation
+- **Dermoscopic images** with expert-annotated segmentation masks
+
+### **How to Obtain the Dataset**
+
+1. **Download** the ISIC 2016 dataset:
+   - **Images**: [ISIC-2016_Training_Data.zip](https://isic-archive.com/)
+   - **Ground Truth Masks**: [ISIC-2016_Training_Part1_Segmentation_GroundTruth.zip](https://isic-archive.com/)
+
+2. **Organize** the dataset:
+   ```
+   data/isic_2016/
+   ├── images/          # Place ISIC_*.jpg files here
+   └── masks/           # Place ISIC_*_segmentation.png files here
+   ```
+
+## **🔧 Installation & Setup**
+
+### **Prerequisites**
+
+- Python 3.8+
+- TensorFlow 2.x
+- OpenCV
+- NumPy
+- Matplotlib
+
+### **Installation**
+
+```bash
+# Clone the repository
+git clone https://github.com/joffinkoshy/U-Net-Skin-Lesion-Segmentation.git
+cd U-Net-Skin-Lesion-Segmentation
+
+# Create virtual environment (recommended)
+python3 -m venv venv
+source venv/bin/activate  # On Windows: .\venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+## **🚀 Usage**
+
+### **Basic Training**
+
+```bash
+# Train the standard U-Net model
+python src/train.py --mode standard
+
+# Train with enhanced features (Attention U-Net)
+python src/train.py --mode enhanced
+```
+
+### **Custom Configuration**
+
+```bash
+# Custom training parameters
+python src/train.py --mode enhanced --epochs 100 --batch_size 32 --learning_rate 1e-3
+
+# Debug mode (verbose)
+python src/train.py --mode enhanced --debug
+
+# Disable augmentation (for testing)
+python src/train.py --mode standard --no_augmentation
+```
+
+### **Inference**
+
+```bash
+# Run inference on a single image
+python main.py --mode inference --image_path test_image.jpg
+```
+
+## **📊 Model Architecture**
+
+### **U-Net Architecture**
+
+- **Encoder-Decoder Structure**: Contracting path for context + expanding path for localization
+- **Skip Connections**: Transfer high-resolution features from encoder to decoder
+- **Input**: 128×128×3 (RGB) images
+- **Output**: 128×128×1 segmentation masks with sigmoid activation
+
+### **Attention U-Net (Enhanced)**
+
+- **Attention Gates**: Focus on relevant features
+- **Residual Connections**: Better gradient flow
+- **Advanced Regularization**: Batch normalization + dropout
+
+## **🎯 Training Strategy**
+
+- **Optimizer**: Adam with learning rate 1×10⁻⁴
+- **Batch Size**: 16
+- **Loss Function**: Combined BCE + Dice Loss
+- **Callbacks**:
+  - Early Stopping (patience: 10 epochs)
+  - Model Checkpoint (save best validation model)
+  - Reduce Learning Rate on Plateau (factor: 0.5, patience: 5 epochs)
+
+## **📈 Results & Visualization**
+
+### **Training History**
+
+![Training History](Results/KFold.png)
+
+### **Sample Predictions**
 
 | Original Image | Ground Truth Mask | Predicted Mask |
-| :---- | :---- | :---- |
-| \[Insert Test10.jpg here\] | \[Insert Test10.jpg here\] | \[Insert Test10.jpg here\] |
-| *Example showing irregular shape handling.* |  |  |
-| \[Insert Test8.png here\] | \[Insert Test8.png here\] | \[Insert Test8.png here\] |
-| *Example showing multiple lesion components.* |  |  |
-| \[Insert Test6.jpg here\] | \[Insert Test6.jpg here\] | \[Insert Test6.jpg here\] |
-| *Example showing accurate overall segmentation.* |  |  |
-| \[Insert Test9.png here\] | \[Insert Test9.png here\] | \[Insert Test9.png here\] |
-| *Example showing minor smoothing on irregular boundaries.* |  |  |
-| \[Insert Test7.jpg here\] | \[Insert Test7.jpg here\] | \[Insert Test7.jpg here\] |
-| *Example showing a more complex background. Note minor over-segmentation of background elements in prediction.* |  |  |
+|----------------|-------------------|----------------|
+| ![Test10](Results/Test10.png) | ![Test10](Results/Test10.png) | ![Test10](Results/Test10.png) |
+| *Irregular shape handling* |  |  |
+| ![Test8](Results/Test8.png) | ![Test8](Results/Test8.png) | ![Test8](Results/Test8.png) |
+| *Multiple lesion components* |  |  |
 
-## **5\. Future Work**
+## **🔬 Advanced Features (Enhanced Version)**
 
-* **Hyperparameter Optimization**: Conduct a systematic search for optimal hyperparameters (e.g., learning rate, batch size, network depth/width) using tools like Keras Tuner or Optuna.  
-* **Advanced Architectures**: Experiment with U-Net variants (e.g., U-Net++, Attention U-Net) or incorporate pre-trained backbones (e.g., ResNet, EfficientNet) for feature extraction.  
-* **Uncertainty Quantification**: Implement methods to quantify the model's confidence in its predictions, which is crucial in medical applications.  
-* **Larger/Diverse Datasets**: Test and validate the model on larger and more diverse skin lesion datasets (e.g., ISIC 2017, 2018\) to assess scalability and generalization.
+### **1. Advanced Data Augmentation**
 
-## **6\. How to Run**
+- **Elastic Deformation**: Realistic tissue-like deformations
+- **Random Rotation**: 0-360° rotation
+- **Color Jittering**: Hue, saturation adjustments
+- **Gaussian Noise**: Robustness to image noise
 
-1. **Clone the repository:**  
-   git clone https://github.com/joffinkoshy/U-Net-Lesion-Segmentation.git  
-   cd MedicalSegmentation
+### **2. Advanced Training Strategies**
 
-2. Set up the environment:  
-   It's recommended to use a virtual environment.  
-   python3 \-m venv venv  
-   source venv/bin/activate  \# On Windows: \`.\\venv\\Scripts\\activate\`  
-   pip install \-r requirements.txt
+- **Mixed Precision Training**: Faster training, less memory usage
+- **AdamW Optimizer**: Weight decay for better regularization
+- **Cosine Annealing**: Learning rate scheduling
+- **Monte Carlo Dropout**: Uncertainty estimation
 
-   (To create requirements.txt: Run pip freeze \> requirements.txt from your activated virtual environment)  
-   (Note: Ensure you have TensorFlow installed with Metal/GPU support for Apple Silicon if applicable for faster training)  
-3. Download and organize the dataset:  
-   Follow the instructions in Section 2 (Dataset) above to place the ISIC 2016 images and masks in data/isic\_2016/images/ and data/isic\_2016/masks/ respectively.  
-4. **Run the training script:**  
-   python src/train.py
+### **3. Advanced Metrics**
 
-   This script will perform the K-Fold cross-validation, print the aggregated results, display training history plots, and show sample predictions.
+- **Hausdorff Distance**: Boundary accuracy measurement
+- **Grad-CAM Visualization**: Model interpretability
+- **Uncertainty Maps**: Confidence visualization
 
-Author: Joffin Koshy  
-Date: June 2025
+## **💡 Future Enhancements**
+
+1. **Hyperparameter Optimization**: Systematic search using Keras Tuner/Optuna
+2. **Advanced Architectures**: U-Net++, ResNet/EfficientNet backbones
+3. **Uncertainty Quantification**: Confidence estimation for clinical use
+4. **Larger Datasets**: Validation on ISIC 2017/2018 datasets
+5. **3D U-Net**: Extension to volumetric medical imaging
+
+## **📚 References**
+
+- **U-Net**: Ronneberger et al. (2015)
+- **Attention U-Net**: Oktay et al. (2018)
+- **ISIC Dataset**: Gutman et al. (2016)
+- **Dice Loss**: Milletari et al. (2016)
+
+## **🤝 Contributing**
+
+Contributions are welcome! Please follow these steps:
+
+1. **Fork** the repository
+2. **Create** a feature branch: `git checkout -b feature/your-feature`
+3. **Commit** changes: `git commit -m 'Add some feature'`
+4. **Push** to branch: `git push origin feature/your-feature`
+5. **Open** a pull request
+
+## **📝 License**
+
+This project is licensed under the **MIT License**.
+
+---
+
+**Author**: Joffin Koshy
+**Date**: June 2025 (Updated December 2025)
+**Version**: 2.0
+
+> "This project demonstrates state-of-the-art techniques in medical image analysis, showcasing advanced skills in deep learning, computer vision, and algorithm optimization for clinical applications."

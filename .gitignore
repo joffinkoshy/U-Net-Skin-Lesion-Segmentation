@@ -1,24 +1,104 @@
 # Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+*.egg-info/
 *.ipynb_checkpoints/
 .DS_Store
 
 # Virtual Environment
 venv/
 .venv/
-# Adjust this path if your virtual env is directly inside the project root, like:
-# storefront-AjrtrSQw/
+env/
+.env/
+python-env/
+.venv/
+env.bak/
+venv.bak/
 
 # Keras / TensorFlow Models
 models/fold_*/    # Exclude individual fold models as they can be large.
 *.keras
 *.h5
+*.hdf5
+*.pb
+*.tflite
 
 # Data (Crucial: Exclude raw data due to size)
 data/isic_2016/images/
 data/isic_2016/masks/
+data/
+!data/.gitkeep
 
 # Logs and other temporary files
 *.log
 *.sqlite3
+*.db
+*.sqlite
+*.csv
+*.json
+*.pkl
+*.npy
+*.npz
+
+# IDE and Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.bak
+*.tmp
+*.cache
+
+# Jupyter notebooks
+*.ipynb
+.ipynb_checkpoints/
+
+# Build and distribution
+build/
+dist/
+*.egg
+*.whl
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test and coverage
+*.cover
+*.html
+*.xml
+coverage/
+.tox/
+.pytest_cache/
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Results and outputs
+Results/
+Results_Enhanced/
+models_enhanced/
+output/
+outputs/
+predictions/
+predictions/
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*.swp
+*.swo
